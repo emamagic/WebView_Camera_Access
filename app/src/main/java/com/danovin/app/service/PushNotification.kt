@@ -19,17 +19,14 @@ import org.json.JSONObject
 class PushNotification : FirebaseMessagingService() {
     lateinit var notification: Notification
     lateinit var notificationManager: NotificationManager
-    private lateinit var title: String
-    private lateinit var body: String
-    private var allData: JSONObject? = null
-    private var chat: JSONObject? = null
     private val channelID = "1"
-    private val channelName = "name"
-    private val channelDes = "description of name"
+    private val channelName = "ch_danovin"
+    private val channelDes = "danovin"
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
-
+        val data = remoteMessage.data
+        Log.e("TAG", "onMessageReceived: $data")
     }
 
     private fun getNotification(title: String, body: String) {
@@ -69,7 +66,6 @@ class PushNotification : FirebaseMessagingService() {
                 .setCategory(NotificationCompat.CATEGORY_CALL)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setVibrate(longArrayOf(100, 500, 500, 500, 500))
-                //  .setSound(Uri.parse("android.resource://" + "com.radmantech.doctor4030" + "/" + R.raw.ringtone))
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setContentIntent(pendingIntent)
             notification = builder.notification
