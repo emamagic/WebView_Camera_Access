@@ -58,7 +58,7 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener {
 
     override fun onPageError(errorCode: Int, description: String?, failingUrl: String?) {
         Toast.makeText(this, "مشکلی رخ داده", Toast.LENGTH_SHORT).show()
-        Handler(Looper.getMainLooper()).postDelayed({ finish() }, 3000)
+        Handler(Looper.getMainLooper()).postDelayed({ finish() }, 2000)
     }
 
     override fun onDownloadRequested(
@@ -116,12 +116,11 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener {
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
         super.onActivityResult(requestCode, resultCode, intent)
         web_view.onActivityResult(requestCode, resultCode, intent)
-
     }
 
     @RequiresApi(Build.VERSION_CODES.KITKAT)
     private fun sendDataToWebView(message: String){
-        web_view.evaluateJavascript("javascript: setData()", null)
+        web_view.evaluateJavascript("javascript: notify(\"$message\")", null)
     }
 
     inner class JSBridge {

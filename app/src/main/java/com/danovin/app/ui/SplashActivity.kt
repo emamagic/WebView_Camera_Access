@@ -22,10 +22,10 @@ class SplashActivity : AppCompatActivity() {
                     return@addOnCompleteListener
                 }
                 val token = task.result
-
+                Log.e("TAG", "onCreate: $token")
+                startActivity(Intent(this, MainActivity::class.java))
+                finish()
             }
-            startActivity(Intent(this, MainActivity::class.java))
-            finish()
         }, 3000)
 
     }
