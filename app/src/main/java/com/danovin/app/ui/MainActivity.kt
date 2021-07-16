@@ -167,10 +167,9 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener {
             try {
                 sendDeviceTokenToWebView(token!!)
             } catch (t: Throwable) {
+                Log.e("TAG", "getDeviceToken: ${t.message}")
                 Toast.makeText(this, "error at processing token", Toast.LENGTH_SHORT).show()
             }
-        } else {
-            Toast.makeText(this, "error at processing token", Toast.LENGTH_SHORT).show()
         }
     }
 
