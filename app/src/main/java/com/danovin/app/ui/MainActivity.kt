@@ -42,6 +42,8 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener {
             settings.allowFileAccess = true
             settings.allowContentAccess = true
             settings.domStorageEnabled = true
+            settings.allowFileAccessFromFileURLs = true;
+            settings.allowUniversalAccessFromFileURLs = true;
             settings.builtInZoomControls = false
             settings.displayZoomControls = false
             settings.domStorageEnabled = true
@@ -135,7 +137,8 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener {
         val myJson = JSONObject()
         myJson.put("apptoken", apptoken)
         myJson.put("usertoken", deviceToken)
-        web_view.evaluateJavascript("javascript: tokenInfo(\"$myJson\")", null)
+        val token = Base64.encodeToString(myJson.toString().toByteArray(), Base64.DEFAULT)
+        web_view.evaluateJavascript("javascript: tokenInfo(\"$token\")", null)
     }
 
     inner class JSBridge {
