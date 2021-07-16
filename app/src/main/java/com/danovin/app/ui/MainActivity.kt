@@ -1,26 +1,30 @@
 package com.danovin.app.ui
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Base64
+import android.util.Log
 import android.view.View
 import android.webkit.JavascriptInterface
 import android.webkit.WebSettings
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.danovin.app.R
 import com.danovin.app.util.Const
+import com.google.android.gms.tasks.Task
+import com.google.firebase.messaging.FirebaseMessaging
 import im.delight.android.webview.AdvancedWebView
 import kotlinx.android.synthetic.main.activity_main.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import org.json.JSONObject
 
 class MainActivity : AppCompatActivity(), AdvancedWebView.Listener {
 
@@ -30,11 +34,7 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        token = intent.getStringExtra(Const.PREF_DEVICE_TOKEN_KEY) ?: ""
-
-        if (!token.isNullOrEmpty()) { sendDeviceTokenToWebView(token!!) }
-
-
+        getDeviceToken()
         web_view.setListener(this, this)
         web_view.apply {
             setMixedContentAllowed(false)
@@ -56,11 +56,11 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener {
     }
 
     override fun onPageStarted(url: String?, favicon: Bitmap?) {
-        web_view_progress.visibility = View.VISIBLE
+        splash.visibility = View.VISIBLE
     }
 
     override fun onPageFinished(url: String?) {
-        web_view_progress.visibility = View.GONE
+        splash.visibility = View.GONE
     }
 
     override fun onPageError(errorCode: Int, description: String?, failingUrl: String?) {
@@ -131,7 +131,11 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener {
     }
 
     private fun sendDeviceTokenToWebView(deviceToken: String) {
-        web_view.evaluateJavascript("javascript: tokenInfo(\"$deviceToken\")", null)
+        val const = "1:544327478305:android:168a1bd4bd441324538760"
+        val myJson = JSONObject()
+        myJson.put("apptoken", const)
+        myJson.put("usertoken", deviceToken)
+        web_view.evaluateJavascript("javascript: tokenInfo(\"$myJson\")", null)
     }
 
     inner class JSBridge {
@@ -141,6 +145,43 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener {
 
         }
 
+    }
+
+    private fun getDeviceToken() {
+        txt_version_app.text = " نسخه ${getVersionName()}"
+        val prefs = getSharedPreferences(Const.PREF_NAME, Context.MODE_PRIVATE)
+        if (prefs.getString(Const.PREF_DEVICE_TOKEN_KEY, null).isNullOrEmpty()) {
+            FirebaseMessaging.getInstance().token.addOnCompleteListener { task: Task<String?> ->
+                if (!task.isSuccessful) {
+                    Log.e("getInstanceId failed", task.exception.toString())
+                    return@addOnCompleteListener
+                }
+                // diplink -> dnvn://
+                token = task.result
+                prefs.edit().putString(Const.PREF_DEVICE_TOKEN_KEY, token).apply()
+            }
+        } else {
+            token = prefs.getString(Const.PREF_DEVICE_TOKEN_KEY, "")
+        }
+        if (!token.isNullOrEmpty()) {
+            try {
+                sendDeviceTokenToWebView(token!!)
+            } catch (t: Throwable) {
+                Toast.makeText(this, "error at processing token", Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            Toast.makeText(this, "error at processing token", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun getVersionName(): String {
+        return try {
+            packageManager
+                .getPackageInfo(packageName, 0).versionName
+        } catch (e: PackageManager.NameNotFoundException) {
+            e.printStackTrace()
+            ""
+        }
     }
 
 }
