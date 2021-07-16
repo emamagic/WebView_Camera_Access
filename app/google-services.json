@@ -1,0 +1,77 @@
+{
+  "project_info": {
+    "project_number": "544327478305",
+    "firebase_url": "https://danovin-763a4.firebaseio.com",
+    "project_id": "danovin-763a4",
+    "storage_bucket": "danovin-763a4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:544327478305:android:875b10073d4d9205538760",
+        "android_client_info": {
+          "package_name": "com.Danovin.hub"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "544327478305-r6rd8bu8k1r9no1kn5thocji4hlm0es0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.Danovin.hub",
+            "certificate_hash": "2bec41472f231ddfa2f24fe6fef85983c37e495e"
+          }
+        },
+        {
+          "client_id": "544327478305-65b5be5mbvq8mgganrrclcu8hatn5sfb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBpn3Es2amj_DF2ZvLrPPq5bcQ_Zy0yrrg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "544327478305-65b5be5mbvq8mgganrrclcu8hatn5sfb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:544327478305:android:168a1bd4bd441324538760",
+        "android_client_info": {
+          "package_name": "com.danovin.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "544327478305-65b5be5mbvq8mgganrrclcu8hatn5sfb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBpn3Es2amj_DF2ZvLrPPq5bcQ_Zy0yrrg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "544327478305-65b5be5mbvq8mgganrrclcu8hatn5sfb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
