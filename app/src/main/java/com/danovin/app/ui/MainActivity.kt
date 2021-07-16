@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Base64
 import android.view.View
 import android.webkit.JavascriptInterface
 import android.webkit.WebSettings
@@ -23,9 +24,15 @@ import org.greenrobot.eventbus.ThreadMode
 
 class MainActivity : AppCompatActivity(), AdvancedWebView.Listener {
 
+    private var token: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        token = intent.getStringExtra(Const.PREF_DEVICE_TOKEN_KEY) ?: ""
+
+        if (!token.isNullOrEmpty()) { sendDeviceTokenToWebView(token!!) }
 
 
         web_view.setListener(this, this)
@@ -118,9 +125,14 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener {
         web_view.onActivityResult(requestCode, resultCode, intent)
     }
 
-    @RequiresApi(Build.VERSION_CODES.KITKAT)
-    private fun sendDataToWebView(message: String){
-        web_view.evaluateJavascript("javascript: notify(\"$message\")", null)
+    private fun sendNotificationMessageToWebView(message: String){
+        val notification = Base64.encodeToString(message.toByteArray(), Base64.DEFAULT)
+        web_view.evaluateJavascript("javascript: notify(\"$notification\")", null)
+    }
+
+    private fun sendDeviceTokenToWebView(message: String) {
+        val deviceToken = Base64.encodeToString(message.toByteArray(), Base64.DEFAULT)
+        web_view.evaluateJavascript("javascript: tokenInfo(\"$deviceToken\")", null)
     }
 
     inner class JSBridge {
