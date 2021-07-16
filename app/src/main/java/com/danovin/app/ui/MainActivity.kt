@@ -131,9 +131,9 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener {
     }
 
     private fun sendDeviceTokenToWebView(deviceToken: String) {
-        val const = "1:544327478305:android:168a1bd4bd441324538760"
+        val apptoken = "1:544327478305:android:168a1bd4bd441324538760"
         val myJson = JSONObject()
-        myJson.put("apptoken", const)
+        myJson.put("apptoken", apptoken)
         myJson.put("usertoken", deviceToken)
         web_view.evaluateJavascript("javascript: tokenInfo(\"$myJson\")", null)
     }
