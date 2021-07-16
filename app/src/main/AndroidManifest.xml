@@ -23,7 +23,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.danovin.app.ui.MainActivity"/>
+        <activity
+            android:name="com.danovin.app.ui.MainActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"/>
 
         <service
             android:name="com.danovin.app.service.PushNotification"

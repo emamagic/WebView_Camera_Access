@@ -125,13 +125,12 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener {
         web_view.onActivityResult(requestCode, resultCode, intent)
     }
 
-    private fun sendNotificationMessageToWebView(message: String){
-        val notification = Base64.encodeToString(message.toByteArray(), Base64.DEFAULT)
+    private fun sendNotificationMessageToWebView(data: String){
+        val notification = Base64.encodeToString(data.toByteArray(), Base64.DEFAULT)
         web_view.evaluateJavascript("javascript: notify(\"$notification\")", null)
     }
 
-    private fun sendDeviceTokenToWebView(message: String) {
-        val deviceToken = Base64.encodeToString(message.toByteArray(), Base64.DEFAULT)
+    private fun sendDeviceTokenToWebView(deviceToken: String) {
         web_view.evaluateJavascript("javascript: tokenInfo(\"$deviceToken\")", null)
     }
 

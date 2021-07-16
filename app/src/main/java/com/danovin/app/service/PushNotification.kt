@@ -27,19 +27,8 @@ class PushNotification : FirebaseMessagingService() {
     private val channelName = "name"
     private val channelDes = "description of name"
 
-    override fun onNewToken(p0: String) {
-        super.onNewToken(p0)
-    }
-
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
-//        EventBus.getDefault().post("test event")
-        Log.e("onMessageReceived", "onMessageReceivedTEST: ${remoteMessage.data}")
-        title = remoteMessage.notification!!.title.toString()
-        body = remoteMessage.notification!!.body.toString()
-        Log.e("TAG", "onMessageReceived:   $title $body")
-        allData = JSONObject(remoteMessage.data.toString())
-
 
     }
 
@@ -66,13 +55,12 @@ class PushNotification : FirebaseMessagingService() {
                 .setCategory(NotificationCompat.CATEGORY_CALL)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setVibrate(longArrayOf(100, 500, 500, 500, 500))
-                //    .setSound(Uri.parse("android.resource://" + "com.radmantech.doctor4030" + "/" + R.raw.ringtone))
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setContentIntent(pendingIntent)
             notification = builder.build()
             notificationManager.notify(0, notification)
         } else {
-            val channel = "4030"
+            val channel = "Danovin"
             val builder = NotificationCompat.Builder(this, channel)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(title)
