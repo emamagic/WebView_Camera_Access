@@ -162,18 +162,13 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener {
                 // diplink -> dnvn://
                 token = task.result
                 prefs.edit().putString(Const.PREF_DEVICE_TOKEN_KEY, token).apply()
+                sendToken(token)
             }
         } else {
             token = prefs.getString(Const.PREF_DEVICE_TOKEN_KEY, "")
+            sendToken(token)
         }
-        if (!token.isNullOrEmpty()) {
-            try {
-                sendDeviceTokenToWebView(token!!)
-            } catch (t: Throwable) {
-                Log.e("TAG", "getDeviceToken: ${t.message}")
-                Toast.makeText(this, "error at processing token", Toast.LENGTH_SHORT).show()
-            }
-        }
+
     }
 
     private fun getVersionName(): String {
@@ -183,6 +178,19 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener {
         } catch (e: PackageManager.NameNotFoundException) {
             e.printStackTrace()
             ""
+        }
+    }
+
+    private fun sendToken(token: String?) {
+        if (!token.isNullOrEmpty()) {
+            try {
+                sendDeviceTokenToWebView(token)
+            } catch (t: Throwable) {
+                Log.e("TAG", "getDeviceToken: ${t.message}")
+                Toast.makeText(this, "error at processing token", Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            Toast.makeText(this, "error at processing token", Toast.LENGTH_SHORT).show()
         }
     }
 
