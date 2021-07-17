@@ -38,8 +38,8 @@ public class ConfirmationDialogFragment extends DialogFragment {
         final String[] resources = getArguments().getStringArray(ARG_RESOURCES);
         return new AlertDialog.Builder(getActivity())
                 .setMessage(getString(R.string.confirmation, TextUtils.join("\n", resources)))
-                .setNegativeButton(R.string.deny, (DialogInterface.OnClickListener) (dialog, which) -> ((Listener) getParentFragment()).onConfirmation(false, resources))
-                .setPositiveButton(R.string.allow, (dialog, which) -> ((Listener) getParentFragment()).onConfirmation(true, resources))
+                .setNegativeButton(R.string.deny, (dialog, which) -> ((Listener) getActivity()).onConfirmation(false, resources))
+                .setPositiveButton(R.string.allow, (dialog, which) -> ((Listener) getActivity()).onConfirmation(true, resources))
                 .create();
     }
 

@@ -1,20 +1,26 @@
 package com.danovin.app.ui
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Base64
 import android.util.Log
 import android.view.View
-import android.webkit.JavascriptInterface
+import android.webkit.PermissionRequest
+import android.webkit.WebChromeClient
 import android.webkit.WebSettings
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.DialogFragment
 import com.danovin.app.R
 import com.danovin.app.util.Const
 import com.google.android.gms.tasks.Task
@@ -26,9 +32,13 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import org.json.JSONObject
 
-class MainActivity : AppCompatActivity(), AdvancedWebView.Listener {
+
+class MainActivity : AppCompatActivity(), AdvancedWebView.Listener, ConfirmationDialogFragment.Listener, MessageDialogFragment.Listener {
 
     private var token: String? = null
+    private val FRAGMENT_DIALOG = "dialog"
+    private val REQUEST_CAMERA_PERMISSION = 1
+    private var mPermissionRequest: PermissionRequest? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,23 +48,10 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener {
         web_view.setListener(this, this)
         web_view.apply {
             setMixedContentAllowed(false)
-            settings.javaScriptEnabled = true
-            settings.allowFileAccess = true
-            settings.allowContentAccess = true
-            settings.domStorageEnabled = true
-            settings.allowFileAccessFromFileURLs = true;
-            settings.allowUniversalAccessFromFileURLs = true;
-            settings.builtInZoomControls = false
-            settings.displayZoomControls = false
-            settings.domStorageEnabled = true
-            settings.allowContentAccess = true
-            settings.setAppCacheEnabled(false)
-            settings.cacheMode = WebSettings.LOAD_NO_CACHE
-            settings.setGeolocationEnabled(true)      // life saver, do not remove
-            addJavascriptInterface(JSBridge(), "JSBridge")
-            loadUrl(Const.URL)
+            webChromeClient = mWebChromeClient
         }
 
+        configureWebSettings(web_view.settings);
     }
 
     override fun onPageStarted(url: String?, favicon: Bitmap?) {
@@ -104,6 +101,12 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener {
     override fun onResume() {
         web_view.onResume()
         super.onResume()
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+            != PackageManager.PERMISSION_GRANTED) {
+            requestCameraPermission();
+        } else {
+            web_view.loadUrl(Const.URL);
+        }
     }
 
     @SuppressLint("NewApi")
@@ -141,14 +144,59 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener {
         web_view.evaluateJavascript("javascript: tokenInfo(\"$token\")", null)
     }
 
-    inner class JSBridge {
-        @JavascriptInterface
-        fun getData(message: String) {
-            // It run on worker thread
+    override fun onRequestPermissionsResult(
+        requestCode: Int, permissions: Array<String?>,
+        grantResults: IntArray
+    ) {
+        if (requestCode == REQUEST_CAMERA_PERMISSION) {
+            if (permissions.size != 1 || grantResults.size != 1 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+            } else if (web_view != null) {
+                web_view.loadUrl(Const.URL)
+            }
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        }
+    }
 
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun requestCameraPermission() {
+        if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
+            MessageDialogFragment.newInstance(R.string.permission_message)
+                .show(supportFragmentManager, FRAGMENT_DIALOG)
+        } else {
+            requestPermissions(arrayOf(Manifest.permission.CAMERA), REQUEST_CAMERA_PERMISSION)
+        }
+    }
+
+    @SuppressLint("SetJavaScriptEnabled")
+    private fun configureWebSettings(settings: WebSettings) {
+        settings.javaScriptEnabled = true
+    }
+
+    private val mWebChromeClient: WebChromeClient = object : WebChromeClient() {
+        @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+        override fun onPermissionRequest(request: PermissionRequest) {
+            println("onPermissionRequest")
+            mPermissionRequest = request
+            val requestedResources = request.resources
+            for (r in requestedResources) {
+                if (r == PermissionRequest.RESOURCE_VIDEO_CAPTURE) {
+                    ConfirmationDialogFragment
+                        .newInstance(arrayOf(PermissionRequest.RESOURCE_VIDEO_CAPTURE))
+                        .show(supportFragmentManager, FRAGMENT_DIALOG)
+                    break
+                }
+            }
         }
 
+        override fun onPermissionRequestCanceled(request: PermissionRequest) {
+            mPermissionRequest = null
+            val fragment: DialogFragment = supportFragmentManager
+                .findFragmentByTag(FRAGMENT_DIALOG) as DialogFragment
+            fragment.dismiss()
+        }
     }
+
 
     private fun getDeviceToken() {
         txt_version_app.text = " نسخه ${getVersionName()}"
@@ -192,6 +240,23 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener {
         } else {
             Toast.makeText(this, "error at processing token", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+    override fun onConfirmation(allowed: Boolean, resources: Array<out String>?) {
+        if (allowed) {
+            mPermissionRequest?.grant(resources);
+
+        } else {
+            mPermissionRequest?.deny();
+        }
+        mPermissionRequest = null;
+    }
+
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    override fun onOkClicked() {
+        requestPermissions(arrayOf(Manifest.permission.CAMERA), REQUEST_CAMERA_PERMISSION)
     }
 
 }
