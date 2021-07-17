@@ -28,11 +28,22 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
-
+            </intent-filter>
+            <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.DEFAULT" />
-                <data android:scheme="dnvn://"/>
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="dnvn.ir"/>
+                <data android:pathPrefix="/lunch" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="dnvn:\\" />
+                <data android:pathPrefix="/lunch" />
             </intent-filter>
         </activity>
 
