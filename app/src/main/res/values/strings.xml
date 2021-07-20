@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Danovin</string>
+    <string name="app_name">دانوین</string>
     <string name="permission_message">به دسترسی دوربین نیاز است</string>
     <string name="confirmation">به دسترسی دوربین نیاز است:\n\n%s</string>
     <string name="allow">اجازه میدهم</string>
