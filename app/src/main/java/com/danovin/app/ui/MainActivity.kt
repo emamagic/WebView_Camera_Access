@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -13,9 +14,7 @@ import android.os.Looper
 import android.util.Base64
 import android.util.Log
 import android.view.View
-import android.webkit.PermissionRequest
-import android.webkit.WebChromeClient
-import android.webkit.WebSettings
+import android.webkit.*
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -47,11 +46,18 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener, Confirmation
         getDeviceToken()
         web_view.setListener(this, this)
         web_view.apply {
-            setMixedContentAllowed(false)
             webChromeClient = mWebChromeClient
+            settings.javaScriptEnabled = true
+            webViewClient = object : WebViewClient(){
+
+                override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
+                    val i = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                    startActivity(i)
+                    return true
+                }
+            }
         }
 
-        configureWebSettings(web_view.settings);
     }
 
     override fun onPageStarted(url: String?, favicon: Bitmap?) {
@@ -105,7 +111,7 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener, Confirmation
             != PackageManager.PERMISSION_GRANTED) {
             requestCameraPermission();
         } else {
-            web_view.loadUrl(Const.URL);
+            web_view.loadUrl(Const.URL)
         }
     }
 
@@ -168,10 +174,8 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener, Confirmation
         }
     }
 
-    @SuppressLint("SetJavaScriptEnabled")
-    private fun configureWebSettings(settings: WebSettings) {
-        settings.javaScriptEnabled = true
-    }
+
+
 
     private val mWebChromeClient: WebChromeClient = object : WebChromeClient() {
         @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
