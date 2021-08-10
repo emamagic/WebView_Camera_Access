@@ -11,19 +11,12 @@ import androidx.fragment.app.DialogFragment;
 
 import com.danovin.app.R;
 
-/**
- * Prompts the user to confirm permission request.
- */
+
 public class ConfirmationDialogFragment extends DialogFragment {
 
     private static final String ARG_RESOURCES = "resources";
 
-    /**
-     * Creates a new instance of ConfirmationDialogFragment.
-     *
-     * @param resources The list of resources requested by PermissionRequest.
-     * @return A new instance.
-     */
+
     public static ConfirmationDialogFragment newInstance(String[] resources) {
         ConfirmationDialogFragment fragment = new ConfirmationDialogFragment();
         Bundle args = new Bundle();
@@ -43,17 +36,8 @@ public class ConfirmationDialogFragment extends DialogFragment {
                 .create();
     }
 
-    /**
-     * Callback for the user's response.
-     */
-    interface Listener {
 
-        /**
-         * Called when the PermissionRequest is allowed or denied by the user.
-         *
-         * @param allowed   True if the user allowed the request.
-         * @param resources The resources to be granted.
-         */
+    interface Listener {
         void onConfirmation(boolean allowed, String[] resources);
     }
 

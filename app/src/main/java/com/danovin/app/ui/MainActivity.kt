@@ -38,6 +38,7 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener, Confirmation
     private val FRAGMENT_DIALOG = "dialog"
     private val REQUEST_CAMERA_PERMISSION = 1
     private var mPermissionRequest: PermissionRequest? = null
+    private var appIsInMemory: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,10 +62,13 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener, Confirmation
     }
 
     override fun onPageStarted(url: String?, favicon: Bitmap?) {
-        splash.visibility = View.VISIBLE
+        if (!appIsInMemory) {
+            splash.visibility = View.VISIBLE
+        }
     }
 
     override fun onPageFinished(url: String?) {
+        appIsInMemory = true
         splash.visibility = View.GONE
     }
 
@@ -109,7 +113,7 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener, Confirmation
         super.onResume()
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
             != PackageManager.PERMISSION_GRANTED) {
-            requestCameraPermission();
+            requestCameraPermission()
         } else {
             web_view.loadUrl(Const.URL)
         }
@@ -180,7 +184,6 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener, Confirmation
     private val mWebChromeClient: WebChromeClient = object : WebChromeClient() {
         @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
         override fun onPermissionRequest(request: PermissionRequest) {
-            println("onPermissionRequest")
             mPermissionRequest = request
             val requestedResources = request.resources
             for (r in requestedResources) {
@@ -249,12 +252,12 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener, Confirmation
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onConfirmation(allowed: Boolean, resources: Array<out String>?) {
         if (allowed) {
-            mPermissionRequest?.grant(resources);
+            mPermissionRequest?.grant(resources)
 
         } else {
-            mPermissionRequest?.deny();
+            mPermissionRequest?.deny()
         }
-        mPermissionRequest = null;
+        mPermissionRequest = null
     }
 
 
