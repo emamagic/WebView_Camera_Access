@@ -40,6 +40,7 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener, Confirmation
     private var mPermissionRequest: PermissionRequest? = null
     private var appIsInMemory: Boolean = false
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -56,6 +57,13 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener, Confirmation
                     return true
                 }
             }
+        }
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+            != PackageManager.PERMISSION_GRANTED) {
+            requestCameraPermission()
+        } else {
+            web_view.loadUrl(Const.URL)
         }
 
     }
@@ -96,24 +104,6 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener, Confirmation
     override fun onStart() {
         super.onStart()
         EventBus.getDefault().register(this)
-    }
-
-    @SuppressLint("NewApi")
-    override fun onResume() {
-        web_view.onResume()
-        super.onResume()
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-            != PackageManager.PERMISSION_GRANTED) {
-            requestCameraPermission()
-        } else {
-            web_view.loadUrl(Const.URL)
-        }
-    }
-
-    @SuppressLint("NewApi")
-    override fun onPause() {
-        web_view.onPause()
-        super.onPause()
     }
 
     override fun onStop() {
