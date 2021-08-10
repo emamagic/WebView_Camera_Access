@@ -50,7 +50,6 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener, Confirmation
             webChromeClient = mWebChromeClient
             settings.javaScriptEnabled = true
             webViewClient = object : WebViewClient(){
-
                 override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
                     val i = Intent(Intent.ACTION_VIEW, Uri.parse(url))
                     startActivity(i)
@@ -62,9 +61,7 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener, Confirmation
     }
 
     override fun onPageStarted(url: String?, favicon: Bitmap?) {
-        if (!appIsInMemory) {
-            splash.visibility = View.VISIBLE
-        }
+        if (!appIsInMemory) { splash.visibility = View.VISIBLE }
     }
 
     override fun onPageFinished(url: String?) {
@@ -84,18 +81,12 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener, Confirmation
         contentLength: Long,
         contentDisposition: String?,
         userAgent: String?
-    ) {
+    ) {}
 
-    }
-
-    override fun onExternalPageRequest(url: String?) {
-
-    }
+    override fun onExternalPageRequest(url: String?) {}
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onMessageEvent(event: String) {
-
-    }
+    fun onMessageEvent(event: String) {}
 
     override fun onBackPressed() {
         if (!web_view.onBackPressed()) return
@@ -182,15 +173,15 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener, Confirmation
 
 
     private val mWebChromeClient: WebChromeClient = object : WebChromeClient() {
-        @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
         override fun onPermissionRequest(request: PermissionRequest) {
             mPermissionRequest = request
             val requestedResources = request.resources
             for (r in requestedResources) {
                 if (r == PermissionRequest.RESOURCE_VIDEO_CAPTURE) {
-                    ConfirmationDialogFragment
-                        .newInstance(arrayOf(PermissionRequest.RESOURCE_VIDEO_CAPTURE))
-                        .show(supportFragmentManager, FRAGMENT_DIALOG)
+                    mPermissionRequest?.grant(requestedResources)
+//                    ConfirmationDialogFragment
+//                        .newInstance(arrayOf(PermissionRequest.RESOURCE_VIDEO_CAPTURE))
+//                        .show(supportFragmentManager, FRAGMENT_DIALOG)
                     break
                 }
             }

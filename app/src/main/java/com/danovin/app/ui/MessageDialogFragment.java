@@ -2,6 +2,7 @@ package com.danovin.app.ui;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 
@@ -27,7 +28,7 @@ public class MessageDialogFragment extends DialogFragment {
         return new AlertDialog.Builder(getContext())
                 .setMessage(getArguments().getInt(ARG_MESSAGE_RES_ID))
                 .setCancelable(false)
-                .setPositiveButton(android.R.string.ok, (dialog, which) -> ((Listener) getParentFragment()).onOkClicked())
+                .setPositiveButton(android.R.string.ok, (dialog, which) -> ((Listener) getActivity()).onOkClicked())
                 .create();
     }
 
