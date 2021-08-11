@@ -22,3 +22,9 @@
 
 -keep class * extends android.webkit.WebChromeClient { *; }
 -dontwarn im.delight.android.webview.**
+
+-keepclassmembers class * {
+    @org.greenrobot.eventbus.Subscribe <methods>;
+}
+-dontwarn com.airbnb.lottie.**
+-keep class com.airbnb.lottie.** {*;}

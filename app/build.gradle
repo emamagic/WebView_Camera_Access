@@ -6,6 +6,14 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        debug {
+            storeFile file('/home/emamagic/Android/KeyStors/danovin.jks')
+            storePassword 'com.danovin123'
+            keyAlias 'danovin'
+            keyPassword 'com.danovin123'
+        }
+    }
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
 
@@ -13,7 +21,7 @@ android {
         applicationId "com.danovin.app"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 3
+        versionCode 4
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -21,7 +29,7 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
