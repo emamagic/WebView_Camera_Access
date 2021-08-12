@@ -35,8 +35,6 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener, Confirmation
     MessageDialogFragment.Listener, NotificationCenter.NotificationCenterDelegate {
 
     private var token: String? = null
-    private val FRAGMENT_DIALOG = "dialog"
-    private val REQUEST_CAMERA_PERMISSION = 1
     private var mPermissionRequest: PermissionRequest? = null
     private var appIsInMemory: Boolean = false
 
@@ -129,7 +127,7 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener, Confirmation
         requestCode: Int, permissions: Array<String?>,
         grantResults: IntArray
     ) {
-        if (requestCode == REQUEST_CAMERA_PERMISSION) {
+        if (requestCode == Const.REQUEST_CAMERA_PERMISSION) {
             if (permissions.size != 1 || grantResults.size != 1 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
             } else if (web_view != null) {
                 web_view.loadUrl(Const.URL)
@@ -143,9 +141,9 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener, Confirmation
     private fun requestCameraPermission() {
         if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
             MessageDialogFragment.newInstance(R.string.permission_message)
-                .show(supportFragmentManager, FRAGMENT_DIALOG)
+                .show(supportFragmentManager, Const.FRAGMENT_DIALOG)
         } else {
-            requestPermissions(arrayOf(Manifest.permission.CAMERA), REQUEST_CAMERA_PERMISSION)
+            requestPermissions(arrayOf(Manifest.permission.CAMERA), Const.REQUEST_CAMERA_PERMISSION)
         }
     }
 
@@ -168,7 +166,7 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener, Confirmation
         override fun onPermissionRequestCanceled(request: PermissionRequest) {
             mPermissionRequest = null
             val fragment: DialogFragment = supportFragmentManager
-                .findFragmentByTag(FRAGMENT_DIALOG) as DialogFragment
+                .findFragmentByTag(Const.FRAGMENT_DIALOG) as DialogFragment
             fragment.dismiss()
         }
     }
@@ -231,7 +229,7 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener, Confirmation
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onOkClicked() {
-        requestPermissions(arrayOf(Manifest.permission.CAMERA), REQUEST_CAMERA_PERMISSION)
+        requestPermissions(arrayOf(Manifest.permission.CAMERA), Const.REQUEST_CAMERA_PERMISSION)
     }
 
     override fun receiveMarkdownData(notifModel: NotifModel) {
