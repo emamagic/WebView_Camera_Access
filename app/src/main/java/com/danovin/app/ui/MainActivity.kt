@@ -24,6 +24,7 @@ import com.danovin.app.R
 import com.danovin.app.service.NotifModel
 import com.danovin.app.service.NotificationCenter
 import com.danovin.app.util.Const
+import com.danovin.app.util.Const.TAG
 import com.google.android.gms.tasks.Task
 import com.google.firebase.messaging.FirebaseMessaging
 import im.delight.android.webview.AdvancedWebView
@@ -111,15 +112,17 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener, Confirmation
 
     private fun sendNotificationMessageToWebView(data: String){
         val notification = Base64.encodeToString(data.toByteArray(), Base64.DEFAULT)
+//        val description = Base64.decode(form_base64[1].toByteArray(), Base64.DEFAULT)
         web_view.evaluateJavascript("javascript: notify(\"$notification\")", null)
     }
 
     private fun sendDeviceTokenToWebView(deviceToken: String) {
-        val apptoken = "1:544327478305:android:168a1bd4bd441324538760"
+        val appToken = "1:544327478305:android:168a1bd4bd441324538760"
         val myJson = JSONObject()
-        myJson.put("apptoken", apptoken)
+        myJson.put("apptoken", appToken)
         myJson.put("usertoken", deviceToken)
         val token = Base64.encodeToString(myJson.toString().toByteArray(), Base64.DEFAULT)
+        Log.e(TAG, "sendDeviceTokenToWebView: $token")
         web_view.evaluateJavascript("javascript: tokenInfo(\"$token\")", null)
     }
 

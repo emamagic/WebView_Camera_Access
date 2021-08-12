@@ -8,5 +8,6 @@ object Const {
     const val NotificationModel = 0
     const val FRAGMENT_DIALOG = "dialog"
     const val REQUEST_CAMERA_PERMISSION = 1
+    const val TAG = "MainActivity"
 
 }

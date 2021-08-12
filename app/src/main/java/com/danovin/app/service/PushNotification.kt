@@ -17,7 +17,6 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import org.json.JSONObject
 
-
 class PushNotification : FirebaseMessagingService() {
     lateinit var notification: Notification
     lateinit var notificationManager: NotificationManager
@@ -40,7 +39,6 @@ class PushNotification : FirebaseMessagingService() {
         val pendingIntent = PendingIntent.getActivity(this@PushNotification, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT)
         notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-
             val notificationChannel = NotificationChannel(channelID, channelName, NotificationManager.IMPORTANCE_DEFAULT)
             notificationChannel.description = channelDes
             notificationChannel.enableLights(true)
