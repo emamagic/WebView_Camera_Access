@@ -44,10 +44,19 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener, Confirmation
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        getDeviceToken()
         web_view.setListener(this, this)
         web_view.apply {
             webChromeClient = mWebChromeClient
+            settings.allowFileAccess = true
+            settings.allowContentAccess = true
+            settings.domStorageEnabled = true
+            settings.builtInZoomControls = false
+            settings.displayZoomControls = false
+            settings.domStorageEnabled = true
+            settings.allowContentAccess = true
+            settings.setGeolocationEnabled(true)
+            settings.cacheMode = WebSettings.LOAD_NO_CACHE
+            settings.setGeolocationEnabled(true)
             settings.javaScriptEnabled = true
             webViewClient = object : WebViewClient(){
                 override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
@@ -56,6 +65,7 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener, Confirmation
                     return true
                 }
             }
+            addJavascriptInterface(JSBridge(), "JSBridge")
         }
 
         NotificationCenter.subscribe(this, Const.NotificationModel)
@@ -102,6 +112,7 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener, Confirmation
     override fun onDestroy() {
         web_view.onDestroy()
         NotificationCenter.unSubscribe(this, Const.NotificationModel)
+        web_view.removeJavascriptInterface("JSBridge")
         super.onDestroy()
     }
 
@@ -111,19 +122,12 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener, Confirmation
     }
 
     private fun sendNotificationMessageToWebView(data: String){
-        val notification = Base64.encodeToString(data.toByteArray(), Base64.DEFAULT)
-//        val description = Base64.decode(form_base64[1].toByteArray(), Base64.DEFAULT)
-        web_view.evaluateJavascript("javascript: notify(\"$notification\")", null)
+        web_view.evaluateJavascript("javascript: notify('$data')", null)
     }
 
     private fun sendDeviceTokenToWebView(deviceToken: String) {
         val appToken = "1:544327478305:android:168a1bd4bd441324538760"
-        val myJson = JSONObject()
-        myJson.put("apptoken", appToken)
-        myJson.put("usertoken", deviceToken)
-        val token = Base64.encodeToString(myJson.toString().toByteArray(), Base64.DEFAULT)
-        Log.e(TAG, "sendDeviceTokenToWebView: $token")
-        web_view.evaluateJavascript("javascript: tokenInfo(\"$token\")", null)
+        web_view.evaluateJavascript("javascript:tokenInfo('$appToken','$deviceToken')", null)
     }
 
     override fun onRequestPermissionsResult(
@@ -237,6 +241,17 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener, Confirmation
 
     override fun receiveMarkdownData(notifModel: NotifModel) {
         sendNotificationMessageToWebView("")
+    }
+
+
+    inner class JSBridge() {
+        @JavascriptInterface
+        fun getMessage(message: String) {
+            // It run on worker thread
+            Handler(Looper.getMainLooper()).post {
+                getDeviceToken()
+            }
+        }
     }
 
 }
