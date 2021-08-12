@@ -9,8 +9,10 @@ import android.media.RingtoneManager
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import com.danovin.app.App
 import com.danovin.app.R
 import com.danovin.app.ui.MainActivity
+import com.danovin.app.util.Const
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import org.json.JSONObject
@@ -27,6 +29,10 @@ class PushNotification : FirebaseMessagingService() {
         super.onMessageReceived(remoteMessage)
         val data = remoteMessage.data
         Log.e("TAG", "onMessageReceived: $data")
+        if (App.isInBackGround) {
+            getNotification("", "")
+        }
+        NotificationCenter.notifySubscribers(NotifModel(Const.NotificationModel, ""))
     }
 
     private fun getNotification(title: String, body: String) {

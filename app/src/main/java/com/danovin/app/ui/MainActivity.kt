@@ -21,18 +21,18 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import com.danovin.app.R
+import com.danovin.app.service.NotifModel
+import com.danovin.app.service.NotificationCenter
 import com.danovin.app.util.Const
 import com.google.android.gms.tasks.Task
 import com.google.firebase.messaging.FirebaseMessaging
 import im.delight.android.webview.AdvancedWebView
 import kotlinx.android.synthetic.main.activity_main.*
-import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
-import org.greenrobot.eventbus.ThreadMode
 import org.json.JSONObject
 
 
-class MainActivity : AppCompatActivity(), AdvancedWebView.Listener, ConfirmationDialogFragment.Listener, MessageDialogFragment.Listener {
+class MainActivity : AppCompatActivity(), AdvancedWebView.Listener, ConfirmationDialogFragment.Listener,
+    MessageDialogFragment.Listener, NotificationCenter.NotificationCenterDelegate {
 
     private var token: String? = null
     private val FRAGMENT_DIALOG = "dialog"
@@ -59,6 +59,7 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener, Confirmation
             }
         }
 
+        NotificationCenter.subscribe(this, Const.NotificationModel)
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
             != PackageManager.PERMISSION_GRANTED) {
             requestCameraPermission()
@@ -93,26 +94,15 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener, Confirmation
 
     override fun onExternalPageRequest(url: String?) {}
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onMessageEvent(event: String) {}
 
     override fun onBackPressed() {
         if (!web_view.onBackPressed()) return
         super.onBackPressed()
     }
 
-    override fun onStart() {
-        super.onStart()
-        EventBus.getDefault().register(this)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        EventBus.getDefault().unregister(this)
-    }
-
     override fun onDestroy() {
         web_view.onDestroy()
+        NotificationCenter.unSubscribe(this, Const.NotificationModel)
         super.onDestroy()
     }
 
@@ -158,8 +148,6 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener, Confirmation
             requestPermissions(arrayOf(Manifest.permission.CAMERA), REQUEST_CAMERA_PERMISSION)
         }
     }
-
-
 
 
     private val mWebChromeClient: WebChromeClient = object : WebChromeClient() {
@@ -230,7 +218,6 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener, Confirmation
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onConfirmation(allowed: Boolean, resources: Array<out String>?) {
         if (allowed) {
             mPermissionRequest?.grant(resources)
@@ -245,6 +232,10 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener, Confirmation
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onOkClicked() {
         requestPermissions(arrayOf(Manifest.permission.CAMERA), REQUEST_CAMERA_PERMISSION)
+    }
+
+    override fun receiveMarkdownData(notifModel: NotifModel) {
+        sendNotificationMessageToWebView("")
     }
 
 }
