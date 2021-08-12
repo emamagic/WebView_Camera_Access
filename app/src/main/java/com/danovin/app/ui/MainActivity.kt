@@ -39,7 +39,6 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener, Confirmation
     private var mPermissionRequest: PermissionRequest? = null
     private var appIsInMemory: Boolean = false
 
-    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -47,16 +46,6 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener, Confirmation
         web_view.setListener(this, this)
         web_view.apply {
             webChromeClient = mWebChromeClient
-            settings.allowFileAccess = true
-            settings.allowContentAccess = true
-            settings.domStorageEnabled = true
-            settings.builtInZoomControls = false
-            settings.displayZoomControls = false
-            settings.domStorageEnabled = true
-            settings.allowContentAccess = true
-            settings.setGeolocationEnabled(true)
-            settings.cacheMode = WebSettings.LOAD_NO_CACHE
-            settings.setGeolocationEnabled(true)
             settings.javaScriptEnabled = true
             webViewClient = object : WebViewClient(){
                 override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
@@ -71,7 +60,7 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener, Confirmation
         NotificationCenter.subscribe(this, Const.NotificationModel)
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
             != PackageManager.PERMISSION_GRANTED) {
-            requestCameraPermission()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) { requestCameraPermission() }
         } else {
             web_view.loadUrl(Const.URL)
         }
