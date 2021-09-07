@@ -47,6 +47,13 @@ class MainActivity : AppCompatActivity(), AdvancedWebView.Listener, Confirmation
         web_view.apply {
             webChromeClient = mWebChromeClient
             settings.javaScriptEnabled = true
+            settings.allowFileAccess = true
+            settings.allowContentAccess = true
+            settings.domStorageEnabled = true
+            settings.builtInZoomControls = false
+            settings.displayZoomControls = false
+            settings.domStorageEnabled = true
+            settings.allowContentAccess = true
             webViewClient = object : WebViewClient(){
                 override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
                     val i = Intent(Intent.ACTION_VIEW, Uri.parse(url))
